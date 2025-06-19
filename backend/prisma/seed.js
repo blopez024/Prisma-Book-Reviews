@@ -5,51 +5,50 @@ const prisma = new PrismaClient();
 
 async function main() {
     // Clean existing data
-    await prisma.comment.deleteMany();
-    await prisma.post.deleteMany();
-    await prisma.user.deleteMany();
+    await prisma.author.deleteMany();
+    await prisma.book.deleteMany();
+    await prisma.review.deleteMany();
 
-    // Create 5 users
-    const users = [];
+    // Create 5 authors
+    const authors = [];
     for (let i = 0; i < 5; i++) {
-        const user = await prisma.user.create({
+        const author = await prisma.author.create({
             data: {
-                email: faker.internet.email(),
-                name: faker.person.fullName(),
-                role: i === 0 ? 'ADMIN' : i === 1 ? 'EDITOR' : 'USER',
+                name: faker.book.author(),
+                bio: faker.person.bio(),
             },
         });
-        users.push(user);
-        console.log(`Created user: ${user.name}`);
+        authors.push(author);
+        console.log(`Created author: ${author.name}`);
     }
 
-    // Each user creates 2-4 posts
-    for (const user of users) {
-        const postCount = faker.number.int({ min: 2, max: 4 });
-        for (let i = 0; i < postCount; i++) {
-            const post = await prisma.post.create({
+    // Each author creates 2-4 books
+    for (const author of authors) {
+        const bookCount = faker.number.int({ min: 2, max: 4 });
+        for (let i = 0; i < bookCount; i++) {
+            const book = await prisma.book.create({
                 data: {
-                    title: faker.lorem.sentence(),
-                    content: faker.lorem.paragraphs(3),
-                    published: faker.datatype.boolean(),
-                    authorId: user.id,
+                    title: faker.book.title(),
+                    isbn: faker.commerce.isbn(13),
+                    authorId: author.id,
                 },
             });
-            console.log(`Created post: ${post.title}`);
+            console.log(`Created book: ${book.title}`);
 
-            // Add 1-3 comments to each post from random users
-            const commentCount = faker.number.int({ min: 1, max: 3 });
-            for (let j = 0; j < commentCount; j++) {
-                const randomUser =
-                    users[faker.number.int({ min: 0, max: users.length - 1 })];
-                await prisma.comment.create({
+            // Add 1-3 reviews to each book from random authors
+            const reviewCount = faker.number.int({ min: 1, max: 3 });
+            for (let j = 0; j < reviewCount; j++) {
+                const randomAuthor =
+                    authors[faker.number.int({ min: 0, max: authors.length - 1 })];
+                await prisma.review.create({
                     data: {
-                        text: faker.lorem.sentence(),
-                        postId: post.id,
-                        authorId: randomUser.id,
+                        content: faker.lorem.paragraph(),
+                        rating: faker.int({ min: 1, max: 5 }),
+                        bookId: book.id,
+                        authorId: randomAuthor.id,
                     },
                 });
-                console.log(`Added comment to post ${post.id}`);
+                console.log(`Added review to book ${book.id}`);
             }
         }
     }
