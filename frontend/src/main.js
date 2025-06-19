@@ -25,11 +25,11 @@ async function fetchAndDisplayData() {
     <ul>
         ${data
         .map(
-          (item) => `
+          (author) => `
             <li>
-                <h2>${item.name}</h2>
-                <strong>Role: </strong>${item.role}<br>
-                <strong>Email: </strong>${item.email}<br>
+                <h2>${author.name}</h2>
+                <strong>Bio: </strong>${author.bio}<br>
+                <strong>Email: </strong>${author.books}<br>
             </li>`,
         )
         .join('')}

@@ -5,9 +5,9 @@ const prisma = new PrismaClient();
 
 async function main() {
     // Clean existing data
-    await prisma.author.deleteMany();
-    await prisma.book.deleteMany();
     await prisma.review.deleteMany();
+    await prisma.book.deleteMany();
+    await prisma.author.deleteMany();
 
     // Create 5 authors
     const authors = [];
@@ -43,7 +43,7 @@ async function main() {
                 await prisma.review.create({
                     data: {
                         content: faker.lorem.paragraph(),
-                        rating: faker.int({ min: 1, max: 5 }),
+                        rating: faker.number.int({ min: 1, max: 5 }),
                         bookId: book.id,
                         authorId: randomAuthor.id,
                     },

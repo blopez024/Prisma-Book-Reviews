@@ -1,3 +1,3 @@
-DROP TABLE User;
-DROP TABLE Post;
-DROP TABLE Comment;
+SELECT * FROM Author;
+SELECT * FROM Book;
+SELECT * FROM Review;

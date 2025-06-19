@@ -10,7 +10,7 @@ app.use(express.json());
 
 app.get('/api/data', async (req, res) => {
     try {
-        const data = await prisma.user.findMany();
+        const data = await prisma.author.findMany();
         return res.json(data);
     } catch (error) {
         console.error('Error fetching data: ', error);
