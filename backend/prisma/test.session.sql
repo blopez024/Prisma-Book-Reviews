@@ -1,0 +1,3 @@
+SELECT * FROM User;
+SELECT * FROM Post;
+SELECT * FROM Comment;
