@@ -1,3 +1,3 @@
-SELECT * FROM User;
-SELECT * FROM Post;
-SELECT * FROM Comment;
+DROP TABLE User;
+DROP TABLE Post;
+DROP TABLE Comment;
