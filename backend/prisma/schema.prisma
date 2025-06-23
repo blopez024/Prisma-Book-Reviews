@@ -9,50 +9,60 @@ datasource db {
 }
 
 model Author {
-  id        Int     @id @default(autoincrement())
-  name      String  @unique
-  avatar    String
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
   bio       String
   age       Int
-  sex       Sex     @default(MALE)
   books     Book[]
-  reviews   Review[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Book {
-  id          Int     @id @default(autoincrement())
-  title       String
-  description String
-  isbn        String  @unique
-  genre       String
-  price       Decimal 
-  author      Author  @relation(fields: [authorId], references: [id])
-  authorId    Int
-  reviews     Review[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model Review {
-  id        Int       @id @default(autoincrement())
-  user      String  
-  rating    Int
-  recommend Recommend
-  content   String
-  date      DateTime  @default(now())
-  book      Book      @relation(fields: [bookId], references: [id])
-  bookId    Int
-  author    Author    @relation(fields: [authorId], references: [id])
-  authorId  Int
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
 
-enum Sex {
-  MALE
-  FEMALE
+model Book {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  isbn        String    @unique
+  genre       String
+  price       Decimal
+  author      Author    @relation(fields: [authorId], references: [id])
+  authorId    Int
+  reviews     Review[]  
+  genres      Genre[] 
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Review {
+  id        Int       @id @default(autoincrement())
+  user      User      @relation(fields: [userId], references: [id])
+  userId    Int
+  rating    Int
+  content   String
+  recommend Recommend 
+  date      DateTime  @default(now()) 
+  book      Book      @relation(fields: [bookId], references: [id])
+  bookId    Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  password  String
+  reviews   Review[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Genre {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  books     Book[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 enum Recommend {
