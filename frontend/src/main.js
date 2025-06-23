@@ -5,7 +5,7 @@ async function fetchAndDisplayData() {
     // Show loading state
     dataContainer.textContent = 'Loading data...';
     // Fetch data from your Express API
-    const response = await fetch('http://localhost:5555/api/data');
+    const response = await fetch('http://localhost:5555/api/getBooks');
     if (!response.ok) {
       console.log(`response not okay`);
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -13,12 +13,28 @@ async function fetchAndDisplayData() {
 
     const data = await response.json();
     console.log(data);
+    console.table(data);
 
     // Display the data
     if (data.length === 0) {
       dataContainer.textContent = 'No data found';
       return;
     }
+
+    // Book
+    /**
+     * Image  Book Title
+     *        by Author Name
+     *        Book Rating
+     * 
+     *        Description of Book
+     * 
+     *        Book Reviews
+     * 
+     * 
+     * About the Author
+     * Name, Age, Bio, Books Written
+     */
 
     // Create HTML for the data
     const html = `

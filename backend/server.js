@@ -8,12 +8,21 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get('/api/data', async (req, res) => {
+app.get('/api/getBooks', async (req, res) => {
     try {
-        const data = await prisma.author.findMany();
+        const data = await prisma.book.findMany({
+            include: {
+                author: true,
+                reviews: {
+                    include: {
+                        author: true,
+                    },
+                },
+            },
+        });
         return res.json(data);
     } catch (error) {
-        console.error('Error fetching data: ', error);
+        console.error('Error fetching author data: ', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });

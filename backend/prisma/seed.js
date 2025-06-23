@@ -15,35 +15,45 @@ async function main() {
         const author = await prisma.author.create({
             data: {
                 name: faker.book.author(),
+                avatar: faker.image.avatar(),
                 bio: faker.person.bio(),
+                age: faker.number.int({ min: 20, max: 60 }),
+                sex: i % 2 ? 'MALE' : 'FEMALE',
             },
         });
         authors.push(author);
         console.log(`Created author: ${author.name}`);
     }
 
-    // Each author creates 2-4 books
+    // Each author creates 3-4 books
     for (const author of authors) {
-        const bookCount = faker.number.int({ min: 2, max: 4 });
+        const bookCount = faker.number.int({ min: 3, max: 4 });
         for (let i = 0; i < bookCount; i++) {
             const book = await prisma.book.create({
                 data: {
                     title: faker.book.title(),
+                    description: faker.lorem.paragraph(),
                     isbn: faker.commerce.isbn(13),
+                    genre: faker.book.genre(),
+                    price: faker.number.int({ min: 5, max: 25, multipleOf: 5 }) - 1 + 0.99,
                     authorId: author.id,
                 },
             });
             console.log(`Created book: ${book.title}`);
 
-            // Add 1-3 reviews to each book from random authors
+            // Add 1-3 reviews to each book from random users
             const reviewCount = faker.number.int({ min: 1, max: 3 });
             for (let j = 0; j < reviewCount; j++) {
                 const randomAuthor =
                     authors[faker.number.int({ min: 0, max: authors.length - 1 })];
+                const rating = faker.number.int({ min: 1, max: 5 });
                 await prisma.review.create({
                     data: {
-                        content: faker.lorem.paragraph(),
-                        rating: faker.number.int({ min: 1, max: 5 }),
+                        user: faker.person.fullName(),
+                        rating: rating,
+                        recommend: rating > 2 ? "YES" : "NO",
+                        content: faker.lorem.paragraph(2),
+                        date: faker.date.recent({ days: 10 }),
                         bookId: book.id,
                         authorId: randomAuthor.id,
                     },

@@ -11,7 +11,10 @@ datasource db {
 model Author {
   id        Int     @id @default(autoincrement())
   name      String  @unique
-  bio       String?
+  avatar    String
+  bio       String
+  age       Int
+  sex       Sex     @default(MALE)
   books     Book[]
   reviews   Review[]
   createdAt DateTime @default(now())
@@ -19,24 +22,40 @@ model Author {
 }
 
 model Book {
-  id        Int     @id @default(autoincrement())
-  title     String
-  isbn      String  @unique
-  author    Author @relation(fields: [authorId], references: [id])
-  authorId  Int
-  reviews   Review[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String
+  isbn        String  @unique
+  genre       String
+  price       Decimal 
+  author      Author  @relation(fields: [authorId], references: [id])
+  authorId    Int
+  reviews     Review[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Review {
-  id        Int     @id @default(autoincrement())
-  content   String
+  id        Int       @id @default(autoincrement())
+  user      String  
   rating    Int
-  book      Book    @relation(fields: [bookId], references: [id])
+  recommend Recommend
+  content   String
+  date      DateTime  @default(now())
+  book      Book      @relation(fields: [bookId], references: [id])
   bookId    Int
-  author    Author  @relation(fields: [authorId], references: [id])
+  author    Author    @relation(fields: [authorId], references: [id])
   authorId  Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+enum Sex {
+  MALE
+  FEMALE
+}
+
+enum Recommend {
+  YES 
+  NO
 }
