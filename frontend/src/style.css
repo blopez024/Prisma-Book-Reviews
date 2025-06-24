@@ -1,5 +1,5 @@
 body {
-  background-color: lightskyblue;
+  background-color: #393e46;
 }
 
 #app {
@@ -14,6 +14,7 @@ body {
   flex-direction: row;
   gap: 40px;
   padding: 20px;
+  margin-bottom: 40px;
   border-radius: 15px;
 }
 

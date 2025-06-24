@@ -1,4 +1,29 @@
+import { emojis } from "./data/emoji";
+
 const dataContainer = document.getElementById('app');
+
+function averageRating(reviews) {
+  let sum = 0;
+  for (let i = 0; i < reviews.length; i++) {
+    sum += reviews[i].rating;
+  }
+  return Math.floor(sum / reviews.length);
+}
+
+function displayRating(star) {
+  switch (star) {
+    case 5:
+      return '⭐⭐⭐⭐⭐';
+    case 4:
+      return '⭐⭐⭐⭐⚝';
+    case 3:
+      return '⭐⭐⭐⚝⚝';
+    case 2:
+      return '⭐⭐⚝⚝⚝';
+    default:
+      return '⭐⚝⚝⚝⚝';
+  }
+}
 
 async function fetchAndDisplayData() {
   try {
@@ -21,49 +46,85 @@ async function fetchAndDisplayData() {
       return;
     }
 
-    // let html = '';
-    // data.map((book) => {
-    //   const info = {
-    //     id: book.id,
-    //     title: book.title,
-    //     description: book.description,
-    //     isbn: book.isbn,
-    //     price: book.price,
-    //     author: book.author.name,
-    //     genre1: book.genres[0].name,
-    //     genre2: book.genres[1].name
-    //   }
 
-    // })
-    // const bookList = document.getElementById("app");
+    let html = '';
 
-    // console.log(bookList)
-    // data.map((book) => {
-    //   const info = {
-    //     id: book.id,
-    //     title: book.title,
-    //     description: book.description,
-    //     isbn: book.isbn,
-    //     price: book.price,
-    //     author: book.author.name,
-    //     genre1: book.genres[0]?.name || "N/A",
-    //     genre2: book.genres[1]?.name || "N/A"
-    //   };
+    data.map((book) => {
+      const info = {
+        id: book.id,
+        title: book.title,
+        description: book.description,
+        isbn: book.isbn,
+        price: book.price,
+        author: book.author.name,
+        genre1: book.genres[0].name,
+        genre2: book.genres[1].name,
+        reviews: book.reviews,
+      };
+
+      // console.log(info.reviews.length)
+      const rating = averageRating(info.reviews)
+
+      const colorStart = emojis[info.genre1].color;
+      const colorEnd = emojis[info.genre2].color;
+
+      const emoji1 = emojis[info.genre1].emoji;
+      const emoji2 = emojis[info.genre2].emoji;
 
 
-    //   const bookDiv = document.createElement("div");
-    //   bookDiv.className = "book";
-    //   bookDiv.innerHTML = `
-    //     <h2>${info.title}</h2>
-    //     <p><strong>Author:</strong> ${info.author}</p>
-    //     <p><strong>Description:</strong> ${info.description}</p>
-    //     <p><strong>ISBN:</strong> ${info.isbn}</p>
-    //     <p><strong>Price:</strong> ${info.price}</p>
-    //     <p><strong>Genres:</strong> ${info.genre1}, ${info.genre2}</p>
-    //   `;
+      html += `
+      <div class="book-details">
+        <div class="book-cover" style="background: linear-gradient(to bottom right, ${colorStart}, ${colorEnd});">
+          <div class="title">${info.title}</div>
+          <div class="author">by ${info.author}</div>
+        </div>
+        <div class="book-info">
+          <div>
+            <h2>${info.title}</h2>
+            <p class="author-name">by ${info.author}</p>
+            <p class="rating">${displayRating(rating)} (${info.reviews.length})</p>
+            <hr />
+            <div class="pricing">
+              <div class="price-card">
+                <h3>eBook</h3>
+                <p>$${info.price - 1}</p>
+              </div>
+              <div class="price-card">
+                <h3>Audiobook</h3>
+                <p>$${info.price}</p>
+              </div>
+              <div class="price-card">
+                <h3>Paperback</h3>
+                <p>$${info.price}</p>
+              </div>
+              <div class="price-card">
+                <h3>Hardcover</h3>
+                <p>$${parseInt(info.price) + 10}</p>
+              </div>
+            </div>
+            <div class="genre-grid">
+              <div class="genre-card" style="background-color:${colorStart};">
+                <span>${emoji1}</span>
+                <p>${info.genre1}</p>
+              </div>
+              <div class="genre-card" style="background-color:${colorEnd};">
+                <span>${emoji2}</span>
+                <p>${info.genre2}</p>
+              </div>
+            </div>
+            <hr />
+            <div class="book-description">
+              '${info.description}'
+            </div>
+          </div>
+        </div>
+      </div>
+      `;
+    });
 
-    //   bookList.appendChild(bookDiv);
-    // });
+    // Append HTML to DOM
+    document.getElementById('app').innerHTML = html;
+
 
   } catch (error) {
     // ... Error Handling goes here

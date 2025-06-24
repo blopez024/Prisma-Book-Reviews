@@ -27,6 +27,11 @@ app.get('/api/books', async (req, res) => {
                         name: true,
                     },
                 },
+                reviews: {
+                    select: {
+                        rating: true,
+                    }
+                }
             },
         });
 
@@ -37,24 +42,6 @@ app.get('/api/books', async (req, res) => {
     }
 });
 
-app.get('/api/getBooks', async (req, res) => {
-    try {
-        const data = await prisma.book.findMany({
-            include: {
-                author: true,
-                reviews: {
-                    include: {
-                        author: true,
-                    },
-                },
-            },
-        });
-        return res.json(data);
-    } catch (error) {
-        console.error('Error fetching author data: ', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
 
 app.listen(5555, () => {
     console.log('server listening on port 5555');

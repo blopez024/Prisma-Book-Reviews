@@ -91,7 +91,7 @@ async function createUsers(count = 15) {
 }
 
 // Create Reviews
-async function createReviews(userId, bookId, low = 1, high = 3) {
+async function createReviews(userId, bookId, low = 3, high = 10) {
     // Determine number of review: 1 - 3
     const reviewCount = faker.number.int({ min: low, max: high });
     for (let j = 0; j < reviewCount; j++) {

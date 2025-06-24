@@ -5,13 +5,13 @@ const emojis = {
     "Children's Literature": { emoji: '🧸', color: '#ADD8E6' },
     Classic: { emoji: '📜', color: '#FFFFF0' },
     Comedy: { emoji: '😂', color: '#FFD700' },
-    Comic: { emoji: '💥', color: '#FF4500' },
+    Comic: { emoji: '💥', color: '#FA875C' },
     Detective: { emoji: '🕵️‍♂️', color: '#36454F' },
-    Drama: { emoji: '🎭', color: '#800020' },
+    Drama: { emoji: '🎭', color: '#B83E5D' },
     Fantasy: { emoji: '🐉', color: '#7851A9' },
     'Graphic Novel': { emoji: '📖', color: '#343434' },
     'Historical Fiction': { emoji: '🏺', color: '#704214' },
-    Horror: { emoji: '🧟', color: '#8B0000' },
+    Horror: { emoji: '🧟', color: '#C95555' },
     Memoir: { emoji: '✍️', color: '#FFDAB9' },
     Mystery: { emoji: '🕰️', color: '#191970' },
     Mythology: { emoji: '⚡', color: '#DAA520' },
@@ -25,3 +25,5 @@ const emojis = {
     Western: { emoji: '🤠', color: '#8B4513' },
     'Young Adult': { emoji: '📱', color: '#00FFFF' },
 };
+
+export { emojis };
