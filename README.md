@@ -162,3 +162,98 @@ npm run dev
 ### 9. Result:
 
 ![Book Review Web Page Preview](./frontend/public/assets/book_review_preview.gif)
+
+---
+
+## Prisma Model Explained
+
+![Prisma ERD](./frontend/public/assets/images/prisma_schema_book_reviews.png)
+
+### 🧑‍💼 Author
+
+Represents a book's author.
+
+**Fields**: `id`, `name`, `bio`, `age`, `createdAt`, `updatedAt`  
+**Relationships**:
+
+- One **Author** can write **many Books**
+- Field: `books Book[]`
+
+---
+
+### 📗 Book
+
+Represents a book entry.
+
+**Fields**: `id`, `title`, `description`, `isbn`, `price`, `createdAt`, `updatedAt`  
+**Relationships**:
+
+- Each **Book** is written by **one Author**
+- Each **Book** can have **many Reviews**
+- Each **Book** can belong to **multiple Genres**
+- Fields: `author Author`, `reviews Review[]`, `genres Genre[]`
+
+---
+
+### ✍️ Review
+
+A user review of a book.
+
+**Fields**: `id`, `rating`, `content`, `recommend`, `date`, `createdAt`, `updatedAt`  
+**Relationships**:
+
+- Each **Review** is written by **one User**
+- Each **Review** is about **one Book**
+- Fields: `user User`, `book Book`
+
+---
+
+### 👤 User
+
+Represents someone who writes reviews.
+
+**Fields**: `id`, `name`, `email`, `password`, `createdAt`, `updatedAt`  
+**Relationships**:
+
+- One **User** can write **many Reviews**
+- Field: `reviews Review[]`
+
+---
+
+### 🏷️ Genre
+
+Represents a book genre/category.
+
+**Fields**: `id`, `name`, `createdAt`, `updatedAt`  
+**Relationships**:
+
+- One **Genre** can include **many Books**
+- One **Book** can belong to **many Genres** (many-to-many)
+- Field: `books Book[]`
+
+---
+
+### ✅ Recommend (Enum)
+
+Used in reviews to indicate recommendation.
+
+Enum values:
+
+- `YES`
+- `NO`
+
+---
+
+## 🔗 Relationship Summary
+
+| Model  | Related To | Relationship Type  |
+| ------ | ---------- | ------------------ |
+| Author | Book       | One-to-Many        |
+| Book   | Author     | Many-to-One        |
+| Book   | Review     | One-to-Many        |
+| Book   | Genre      | Many-to-Many       |
+| Review | Book, User | Many-to-One (each) |
+| User   | Review     | One-to-Many        |
+| Genre  | Book       | Many-to-Many       |
+
+---
