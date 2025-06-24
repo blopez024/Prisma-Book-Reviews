@@ -3,17 +3,17 @@ const dataContainer = document.getElementById('app');
 async function fetchAndDisplayData() {
   try {
     // Show loading state
-    dataContainer.textContent = 'Loading data...';
+    // dataContainer.textContent = 'Loading data...';
     // Fetch data from your Express API
-    const response = await fetch('http://localhost:5555/api/getBooks');
+    const response = await fetch('http://localhost:5555/api/books');
     if (!response.ok) {
       console.log(`response not okay`);
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log(data);
-    console.table(data);
+    // console.log(data);
+    // console.table(data);
 
     // Display the data
     if (data.length === 0) {
@@ -21,38 +21,50 @@ async function fetchAndDisplayData() {
       return;
     }
 
-    // Book
-    /**
-     * Image  Book Title
-     *        by Author Name
-     *        Book Rating
-     * 
-     *        Description of Book
-     * 
-     *        Book Reviews
-     * 
-     * 
-     * About the Author
-     * Name, Age, Bio, Books Written
-     */
+    // let html = '';
+    // data.map((book) => {
+    //   const info = {
+    //     id: book.id,
+    //     title: book.title,
+    //     description: book.description,
+    //     isbn: book.isbn,
+    //     price: book.price,
+    //     author: book.author.name,
+    //     genre1: book.genres[0].name,
+    //     genre2: book.genres[1].name
+    //   }
 
-    // Create HTML for the data
-    const html = `
-    <ul>
-        ${data
-        .map(
-          (author) => `
-            <li>
-                <h2>${author.name}</h2>
-                <strong>Bio: </strong>${author.bio}<br>
-                <strong>Email: </strong>${author.books}<br>
-            </li>`,
-        )
-        .join('')}
-    </ul>
-    `;
+    // })
+    // const bookList = document.getElementById("app");
 
-    dataContainer.innerHTML = html;
+    // console.log(bookList)
+    // data.map((book) => {
+    //   const info = {
+    //     id: book.id,
+    //     title: book.title,
+    //     description: book.description,
+    //     isbn: book.isbn,
+    //     price: book.price,
+    //     author: book.author.name,
+    //     genre1: book.genres[0]?.name || "N/A",
+    //     genre2: book.genres[1]?.name || "N/A"
+    //   };
+
+
+    //   const bookDiv = document.createElement("div");
+    //   bookDiv.className = "book";
+    //   bookDiv.innerHTML = `
+    //     <h2>${info.title}</h2>
+    //     <p><strong>Author:</strong> ${info.author}</p>
+    //     <p><strong>Description:</strong> ${info.description}</p>
+    //     <p><strong>ISBN:</strong> ${info.isbn}</p>
+    //     <p><strong>Price:</strong> ${info.price}</p>
+    //     <p><strong>Genres:</strong> ${info.genre1}, ${info.genre2}</p>
+    //   `;
+
+    //   bookList.appendChild(bookDiv);
+    // });
+
   } catch (error) {
     // ... Error Handling goes here
     console.error('Error:', error);

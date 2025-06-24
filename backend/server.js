@@ -8,6 +8,35 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.get('/api/books', async (req, res) => {
+    try {
+        const books = await prisma.book.findMany({
+            select: {
+                id: true,
+                title: true,
+                description: true,
+                isbn: true,
+                price: true,
+                author: {
+                    select: {
+                        name: true,
+                    },
+                },
+                genres: {
+                    select: {
+                        name: true,
+                    },
+                },
+            },
+        });
+
+        return res.json(books);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to load books' });
+    }
+});
+
 app.get('/api/getBooks', async (req, res) => {
     try {
         const data = await prisma.book.findMany({
