@@ -104,7 +104,7 @@ Create a .env file within the prisma folder
 
 ```bash
 cd prisma
-echo 'DATABASE_URL="file:test.sqlite"' > filename.env
+echo 'DATABASE_URL="file:test.sqlite"' > .env
 ```
 
 ### 4. Generate Prisma Client
