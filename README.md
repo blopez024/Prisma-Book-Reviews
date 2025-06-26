@@ -126,7 +126,7 @@ This creates the database tables based on schema.prisma.
 You can generate new data by running the following file
 
 ```bash
-node seeds.js
+node seed.js
 ```
 
 ### 7. Run the backend app
