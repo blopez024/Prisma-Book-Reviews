@@ -1,9 +1,9 @@
 import { displayRating } from "../utils/rating";
 
 function renderPricing(price) {
-    const priceNum = parseFloat(price);
+  const priceNum = parseFloat(price);
 
-    return `
+  return `
     <div class="pricing">
       <div class="price-card">
         <h3>eBook</h3>
@@ -26,7 +26,7 @@ function renderPricing(price) {
 }
 
 function renderGenres(genre1, genre2) {
-    return `
+  return `
     <div class="genre-grid">
       <div class="genre-card" style="background-color:${genre1.color};">
         <span>${genre1.emoji}</span>
@@ -41,7 +41,7 @@ function renderGenres(genre1, genre2) {
 }
 
 function renderBookDescription(description) {
-    return `
+  return `
     <div class="book-description">
       '${description}'
     </div>
@@ -49,12 +49,12 @@ function renderBookDescription(description) {
 }
 
 function renderBookInfo(book, rating, genre1, genre2) {
-    return `
+  return `
     <div class="book-info">
       <div>
         <h2>${book.title}</h2>
         <p class="author-name">by ${book.author.name}</p>
-        <p class="rating">${displayRating(rating)} (${book.reviews.length})</p>
+        <p class="rating">${displayRating(rating)} (${book.reviews.length} Reviews)</p>
         <hr />
         ${renderPricing(book.price)}
         ${renderGenres(genre1, genre2)}
