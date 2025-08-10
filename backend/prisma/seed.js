@@ -12,22 +12,18 @@ function getRandomElement(array) {
 
 // Return two unique genre IDs
 function getGenreIds(genres) {
-    const firstId = getRandomElement(genres).id;
-    let secondId = getRandomElement(genres).id;
+    const shuffled = [...genres].sort(() => Math.random() - 0.5);
+    const [firstId, secondId] = [shuffled[0].id, shuffled[1].id];
 
-    while (firstId === secondId) {
-        secondId = getRandomElement(genres).id;
-    }
-
-    return { firstId: firstId, secondId: secondId };
+    return { firstId, secondId };
 }
 
 // Create Authors
-async function createAuthors(count = 5) {
+async function createAuthors(prismaClient = prisma, count = 5) {
     const authors = [];
 
     for (let i = 0; i < count; i++) {
-        const author = await prisma.author.create({
+        const author = await prismaClient.author.create({
             data: {
                 name: `${faker.person.prefix()} ${faker.book.author()}`,
                 bio: faker.person.bio(),
@@ -43,77 +39,81 @@ async function createAuthors(count = 5) {
 }
 
 // Create unique Book Genres
-async function createGenres(low = 10, high = 15) {
-    const genres = [];
-    const bookGenres = [];
+async function createGenres(prismaClient = prisma, low = 10, high = 15) {
     // Determine number of genres: 10 - 15
     const genreCount = faker.number.int({ min: low, max: high });
+    // Use a Set to store unique genre names
+    const uniqueGenres = new Set();
 
-    // Loop to create genres until we reach the desired count
-    while (bookGenres.length < genreCount) {
-        const bookGenre = faker.book.genre();
-
-        // Only create the genre if it's not already in the bookGenres array
-        if (!bookGenres.includes(bookGenre)) {
-            const genre = await prisma.genre.create({
-                data: {
-                    name: bookGenre,
-                },
-            });
-
-            genres.push(genre);
-            bookGenres.push(bookGenre);
-            console.log(`Created genre: ${genre.name}`);
-        }
+    // Loop until the Set has the desired number of unique genres
+    while (uniqueGenres.size < genreCount) {
+        uniqueGenres.add(faker.book.genre());
     }
 
-    return genres;
+    // Convert Set to an array of objects with the shape: { name: genre }
+    const genreData = Array.from(uniqueGenres).map((name) => ({ name }));
+
+    // Insert all genre objects into the database using Prisma
+    await prismaClient.genre.createMany({ data: genreData });
+    console.log(`Created ${genreData.length} genres.`);
+
+    // Return all genres from the database
+    return prismaClient.genre.findMany();
 }
 
 // Create Users
-async function createUsers(count = 15) {
-    const users = [];
+async function createUsers(prismaClient = prisma, count = 20) {
+    const usersData = [];
 
     for (let i = 0; i < count; i++) {
-        const user = await prisma.user.create({
-            data: {
-                name: faker.person.fullName(),
-                email: faker.internet.email(),
-                password: faker.internet.password(),
-            },
+        // Just prepare the data, don't await the creation yet
+        usersData.push({
+            name: faker.person.fullName(),
+            email: faker.internet.email(),
+            password: faker.internet.password(),
         });
-
-        users.push(user);
-        console.log(`Created user: ${user.name}`);
     }
 
-    return users;
+    // Insert all users in a single database query
+    await prismaClient.user.createMany({
+        data: usersData,
+    });
+
+    console.log(`Created ${count} users`);
+
+    // Fetch the users to get their generated IDs for later use
+    return prismaClient.user.findMany();
 }
 
-// Create Reviews
-async function createReviews(userId, bookId, low = 3, high = 10) {
-    // Determine number of review: 1 - 3
-    const reviewCount = faker.number.int({ min: low, max: high });
-    for (let j = 0; j < reviewCount; j++) {
-        // Random rating between 1 - 5
-        const rating = faker.number.int({ min: 1, max: 5 });
+// Create Review
+async function createReview(userId, bookId, prismaClient = prisma) {
+    // Random rating between 1 - 5
+    const rating = faker.number.int({ min: 1, max: 5 });
 
-        const review = await prisma.review.create({
-            data: {
-                userId: userId,
-                rating: rating,
-                content: faker.lorem.paragraphs(2),
-                recommend: rating > 2 ? 'YES' : 'NO',
-                date: faker.date.recent({ days: 10 }),
-                bookId: bookId,
-            },
-        });
-        console.log(`Created review: ${review.rating}/5`);
-    }
+    const review = await prismaClient.review.create({
+        data: {
+            userId: userId,
+            rating: rating,
+            content: faker.lorem.paragraphs(2),
+            recommend: rating > 2 ? 'YES' : 'NO',
+            date: faker.date.recent({ days: 30 }),
+            bookId: bookId,
+        },
+    });
+    console.log(
+        `Created review with rating: ${review.rating}/5 by user ID: ${userId}`,
+    );
 }
 
 // Create Books for the given author
-async function createBooks(author, genres, users, low = 2, high = 3) {
+async function createBooks(
+    author,
+    genres,
+    users,
+    prismaClient = prisma,
+    low = 2,
+    high = 3,
+) {
     // Determine number of books to add: 2 - 3
     const bookCount = faker.number.int({ min: low, max: high });
 
@@ -122,7 +122,7 @@ async function createBooks(author, genres, users, low = 2, high = 3) {
         // Get two random & unique genre IDs for the book
         const genreIds = getGenreIds(genres);
 
-        const book = await prisma.book.create({
+        const book = await prismaClient.book.create({
             data: {
                 title: faker.book.title(),
                 description: faker.lorem.paragraphs(),
@@ -137,8 +137,13 @@ async function createBooks(author, genres, users, low = 2, high = 3) {
         });
         console.log(`Created book: ${book.title}`);
 
-        const userId = getRandomElement(users).id;
-        await createReviews(userId, book.id);
+        // Create multiple review from different users for this book
+        const numOfReviews = faker.number.int({ min: 3, max: 5 });
+        for (let j = 0; j < numOfReviews; j++) {
+            // Get a new random user for each review
+            const randomUser = getRandomElement(users);
+            await createReview(randomUser.id, book.id, prismaClient);
+        }
     }
 }
 
@@ -150,19 +155,22 @@ async function main() {
     await prisma.genre.deleteMany();
     await prisma.author.deleteMany();
 
-    // Create 5 authors
-    const authors = await createAuthors();
+    // Wrap all write operation in a transaction
+    await prisma.$transaction(async (tx) => {
+        // Create 5 authors
+        const authors = await createAuthors(tx);
 
-    // Create between 10 - 15 unique Genres
-    const genres = await createGenres(); //[];
+        // Create between 10 - 15 unique Genres
+        const genres = await createGenres(tx);
 
-    // Create 15 Users
-    const users = await createUsers();
+        // Create 20 Users
+        const users = await createUsers(tx);
 
-    // Each author has between 2 - 3 books
-    for (const author of authors) {
-        await createBooks(author, genres, users);
-    }
+        // Each author has between 2 - 3 books
+        for (const author of authors) {
+            await createBooks(author, genres, users, tx);
+        }
+    });
 }
 
 main()

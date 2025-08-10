@@ -30,19 +30,18 @@ app.get('/api/books', async (req, res) => {
                 reviews: {
                     select: {
                         rating: true,
-                    }
-                }
+                    },
+                },
             },
         });
 
         return res.json(books);
     } catch (error) {
-        console.error(error);
+        console.error('Error fetching books:', error);
         res.status(500).json({ error: 'Failed to load books' });
     }
 });
 
-
 app.listen(5555, () => {
-    console.log('server listening on port 5555');
+    console.log('server listening on http://localhost:5555');
 });
