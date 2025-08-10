@@ -179,22 +179,19 @@ async function main() {
     await prisma.genre.deleteMany();
     await prisma.author.deleteMany();
 
-    // Wrap all write operation in a transaction
-    await prisma.$transaction(async (tx) => {
-        // Create 5 authors
-        const authors = await createAuthors(tx);
+    // Create 5 authors
+    const authors = await createAuthors(prisma);
 
-        // Create between 10 - 15 unique Genres
-        const genres = await createGenres(tx);
+    // Create between 10 - 15 unique Genres
+    const genres = await createGenres(prisma);
 
-        // Create 15 Users
-        const users = await createUsers(tx);
+    // Create 15 Users
+    const users = await createUsers(prisma);
 
-        // Each author has between 2 - 3 books
-        for (const author of authors) {
-            await createBooks(author, genres, users, tx);
-        }
-    });
+    // Each author has between 2 - 3 books
+    for (const author of authors) {
+        await createBooks(author, genres, users, prisma);
+    }
 }
 
 main()

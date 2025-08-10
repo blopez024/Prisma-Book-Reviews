@@ -42,6 +42,7 @@ app.get('/api/books', async (req, res) => {
     }
 });
 
-app.listen(5555, () => {
-    console.log('server listening on http://localhost:5555');
+const PORT = process.env.PORT || 5555;
+app.listen(PORT, () => {
+    console.log(`server listening on http://localhost:${PORT}`);
 });
